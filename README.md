@@ -1,1 +1,1 @@
-# tzif
+# tz_info
