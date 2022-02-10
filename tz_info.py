@@ -172,7 +172,7 @@ class TZInfo:
             begin = end
             self.read_footer(buf[begin:])
 
-    def get_transition_index(self, timestamp, begin, end):
+    def __search_transition_index(self, timestamp, begin, end):
         if timestamp >= self.transition_times[self.timecnt - 1]:
             return self.timecnt - 1
 
@@ -185,17 +185,26 @@ class TZInfo:
             return mid
 
         if timestamp < self.transition_times[mid]:
-            return self.get_transition_index(timestamp, begin, mid)
+            return self.__search_transition_index(timestamp, begin, mid)
         elif timestamp > self.transition_times[mid]:
-            return self.get_transition_index(timestamp, mid, end)
+            return self.__search_transition_index(timestamp, mid, end)
         else:
             return mid
+
+    def get_transition_index(self, timestamp):
+        if self.timecnt == 0:
+            return -1
+
+        return self.__search_transition_index(timestamp, 0, self.timecnt - 1)
 
     def get_transition_offset(self, timestamp):
         if self.timecnt == 0:
             return 0
 
-        time_idx = self.get_transition_index(timestamp, 0, self.timecnt - 1)
+        time_idx = self.get_transition_index(timestamp)
+        if time_idx == -1:
+            return 0
+
         current_trtime_type = self.transition_types[time_idx]
         (utoff, isdst, desigidx) = self.local_time_type_records[current_trtime_type]
         return utoff
