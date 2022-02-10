@@ -145,7 +145,7 @@ class TZInfo:
             self.ut_local_indicators = struct.unpack(fmt, mem[mem_idx:mem_idx + self.isutcnt])
 
     def read_footer(self, buf):
-        self.tz_string = buf[1:-1].decode()
+        self.tz_string = buf.decode()
 
     def read(self):
         with open(TZInfo.BASEDIR + "/" + self.tz, "rb") as f:
@@ -203,14 +203,35 @@ class TZInfo:
 
         return self.__search_transition_index(timestamp, 0, self.timecnt - 1)
 
-    def get_transition_offset(self, trans_idx: int):
+    def get_local_time_type(self, trans_idx: int):
         if self.timecnt == 0:
-            return 0
+            return None
 
         assert 0 <= trans_idx <= (self.timecnt - 1)
+        type_index = self.transition_types[trans_idx]
+        assert 0 <= type_index <= (self.typecnt - 1)
+        return self.local_time_type_records[type_index]
 
-        (utoff, isdst, desigidx) = self.local_time_type_records[self.transition_types[trans_idx]]
-        return utoff
+    LOCAL_TIME_TYPE_FIELD_UTOFF = 0
+    LOCAL_TIME_TYPE_FIELD_ISDST = 1
+    LOCAL_TIME_TYPE_FIELD_DESIG_IDX = 2
+
+    def get_local_time_type_field(self, trans_idx: int, column: int = 0):
+        assert TZInfo.LOCAL_TIME_TYPE_FIELD_UTOFF <= column <= TZInfo.LOCAL_TIME_TYPE_FIELD_DESIG_IDX
+        local_time_type = self.get_local_time_type(trans_idx)
+        if local_time_type is None:
+            return 0
+        else:
+            return local_time_type[column]
+
+    def get_transition_offset(self, trans_idx: int):
+        return self.get_local_time_type_field(trans_idx, TZInfo.LOCAL_TIME_TYPE_FIELD_UTOFF)
+
+    def get_transition_isdst(self, trans_idx: int):
+        return self.get_local_time_type_field(trans_idx, TZInfo.LOCAL_TIME_TYPE_FIELD_ISDST)
+
+    def get_transition_desig_index(self, trans_idx: int):
+        return self.get_local_time_type_field(trans_idx, TZInfo.LOCAL_TIME_TYPE_FIELD_DESIG_IDX)
 
     @staticmethod
     def utoff_strftime(utoff: int):
