@@ -185,7 +185,7 @@ class TZInfo:
             return mid
 
         if timestamp < self.transition_times[mid]:
-            return self.__search_transition_index(timestamp, begin, mid)
+            return self.__search_transition_index(timestamp, begin, mid - 1)
         elif timestamp > self.transition_times[mid]:
             return self.__search_transition_index(timestamp, mid, end)
         else:
