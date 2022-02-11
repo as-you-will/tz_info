@@ -63,6 +63,8 @@ class TZInfo:
 
         assert magic == b'TZif'
         assert ver == 0 or ver == b'2' or ver == b'3'
+        assert isutcnt == 0 or isutcnt == typecnt
+        assert isstdcnt == 0 or isstdcnt == typecnt
 
         self.version = ver
         self.isutcnt = isutcnt
