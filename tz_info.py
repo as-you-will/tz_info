@@ -11,6 +11,7 @@ class TZInfo:
 
     def __init__(self, tz):
         self.tz = tz
+        self.basedir = TZInfo.BASEDIR
         self.version = 0
         self.isutcnt = 0
         self.isstdcnt = 0
@@ -148,7 +149,7 @@ class TZInfo:
         self.tz_string = buf.decode()
 
     def read(self):
-        with open(TZInfo.BASEDIR + "/" + self.tz, "rb") as f:
+        with open(self.basedir + "/" + self.tz, "rb") as f:
             buf = f.read()
 
         assert len(buf) > TZInfo.HEADER_LEN
