@@ -26,7 +26,7 @@ class TZInfo:
         self.leap_seconds_records = None
         self.standard_wall_indicators = None
         self.ut_local_indicators = None
-        self.tz_string = None
+        self.tz_strings = None
 
     def __str__(self):
         return "time zone: {}\n" \
@@ -38,7 +38,7 @@ class TZInfo:
                "leap-second records: {}\n" \
                "standard/wall indicators: {}\n" \
                "UT/local indicators: {}\n" \
-               "tz_string: {}".format(
+               "tz_strings: {}".format(
             self.tz,
             self.version,
             self.isutcnt,
@@ -54,7 +54,7 @@ class TZInfo:
             self.leap_seconds_records,
             self.standard_wall_indicators,
             self.ut_local_indicators,
-            self.tz_string
+            self.tz_strings
         )
 
     def read_header(self, mem):
@@ -148,7 +148,7 @@ class TZInfo:
             self.ut_local_indicators = struct.unpack(fmt, mem[mem_idx:mem_idx + self.isutcnt])
 
     def read_footer(self, buf):
-        self.tz_string = buf.decode()
+        self.tz_strings = buf[:]
 
     def read(self):
         with open(self.basedir + "/" + self.tz, "rb") as f:
