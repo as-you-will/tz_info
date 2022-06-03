@@ -29,33 +29,16 @@ class TZInfo:
         self.tz_strings = None
 
     def __str__(self):
-        return "time zone: {}\n" \
-               "version: {}, isutcnt: {}, isstdcnt: {}, leapcnt: {}, timecnt: {}, typecnt: {}, charcnt: {}\n" \
-               "transition times: {}\n" \
-               "transition types: {}\n" \
-               "local time type records: {}\n" \
-               "time zone designations: {}\n" \
-               "leap-second records: {}\n" \
-               "standard/wall indicators: {}\n" \
-               "UT/local indicators: {}\n" \
-               "tz_strings: {}".format(
-            self.tz,
-            self.version,
-            self.isutcnt,
-            self.isstdcnt,
-            self.leapcnt,
-            self.timecnt,
-            self.typecnt,
-            self.charcnt,
-            self.transition_times,
-            self.transition_types,
-            self.local_time_type_records,
-            self.time_zone_designations,
-            self.leap_seconds_records,
-            self.standard_wall_indicators,
-            self.ut_local_indicators,
-            self.tz_strings
-        )
+        return f"time zone: {self.tz}\n" \
+               f"version: {self.version}, isutcnt: {self.isutcnt}, isstdcnt: {self.isstdcnt}, leapcnt: {self.leapcnt}, timecnt: {self.timecnt}, typecnt: {self.typecnt}, charcnt: {self.charcnt}\n" \
+               f"transition times: {self.transition_times}\n" \
+               f"transition types: {self.transition_types}\n" \
+               f"local time type records: {self.local_time_type_records}\n" \
+               f"time zone designations: {self.time_zone_designations}\n" \
+               f"leap-second records: {self.leap_seconds_records}\n" \
+               f"standard/wall indicators: {self.standard_wall_indicators}\n" \
+               f"UT/local indicators: {self.ut_local_indicators}\n" \
+               f"tz_strings: {self.tz_strings}"
 
     def read_header(self, mem):
         magic, ver, isutcnt, isstdcnt, leapcnt, timecnt, typecnt, charcnt \
@@ -238,5 +221,4 @@ class TZInfo:
 
     @staticmethod
     def utoff_strftime(utoff: int):
-        return "{}{}".format("-" if utoff < 0 else "+", time.strftime("%H:%M:%S", time.gmtime(utoff)))
-
+        return "{}{}".format("-" if utoff < 0 else "+", time.strftime("%H:%M:%S", time.gmtime(abs(utoff))))
